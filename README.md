@@ -59,4 +59,4 @@ python client.py
 # 🛠️ Tehnologii Folosite
 Python 3.10
 Docker
-Sockets / [Adauga orice alta biblioteca importanta ai folosit]
+Sockets 
