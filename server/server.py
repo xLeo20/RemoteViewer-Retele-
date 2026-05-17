@@ -75,7 +75,8 @@ def handle_client(client_socket, address):
                         target_socket = connected_users[target_user]
                         protocol.send_msg(target_socket, meta, binary_data)
                     else:
-                        print(f"[!] '{username}' a trimis pachet pentru '{target_user}', dar tinta s-a deconectat.")
+                        print(f"[!] '{username}' a cerut ecranul lui '{target_user}', care s-a deconectat.")
+                        protocol.send_msg(client_socket, {"type": "error", "message": f"Utilizatorul {target_user} nu mai este conectat."})
 
     except Exception as e:
         print(f"[!] Eroare de retea cu {username} ({address}): {e}")

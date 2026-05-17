@@ -13,6 +13,7 @@ from PIL import Image, ImageTk
 
 HOST = '127.0.0.1' 
 PORT = 5000
+REFRESH_RATE = 0.2  # Rata de actualizare configurabila (secunde)
 
 class RemoteViewerClient:
     def __init__(self, root):
@@ -120,6 +121,10 @@ class RemoteViewerClient:
 
                 elif msg_type == "frame":
                     self.display_image(binary)
+                
+                # Tratarea erorilor de retea / utilizator inexistent
+                elif msg_type == "error":
+                    messagebox.showwarning("Eroare", meta.get("message", "Eroare server."))
 
         except Exception as e:
             print(f"Deconectat de la server: {e}")
@@ -167,13 +172,21 @@ class RemoteViewerClient:
                     img_bytes = img_byte_arr.getvalue()
 
                     for viewer in list(self.viewers_of_my_screen):
-                        meta = {"type": "frame", "target": viewer, "from": self.my_username}
+                        # Metadate complete conform cerintelor
+                        meta = {
+                                "type": "frame", 
+                                "target": viewer, 
+                                "from": self.my_username,
+                                "format": "JPEG",
+                                "size": len(img_bytes),
+                                "timestamp": time.time()
+                        }
                         protocol.send_msg(self.sock, meta, img_bytes)
                         
                 except Exception as e:
                     print(f"Eroare la captura de ecran: {e}")
                 
-                time.sleep(0.2) 
+                time.sleep(REFRESH_RATE) 
 
 if __name__ == "__main__":
     root = tk.Tk()
